@@ -1,5 +1,10 @@
-from homeassistant.components.button import ButtonEntity
+from homeassistant.components.button import (
+    ButtonDeviceClass,
+    ButtonEntity,
+    ButtonEntityDescription,
+)
 from homeassistant.core import HomeAssistant
+from homeassistant.const import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.config_entries import ConfigEntry
 
@@ -10,27 +15,25 @@ async def async_setup_entry(
     config_entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    """Set up buttons."""
     client = hass.data[DOMAIN][config_entry.entry_id]["client"]
     coordinator = hass.data[DOMAIN][config_entry.entry_id]["coordinator"]
 
     async_add_entities([RebootButton(coordinator, client)])
 
 class RebootButton(ButtonEntity):
-    """Representation of a reboot button."""
-
     def __init__(self, coordinator, client):
         self._client = client
         self._coordinator = coordinator
         self._attr_unique_id = f"tplink_mr200_reboot"
         device_info = coordinator.data.get("device_info", {})
         device_name = device_info.get("model", "").lower().replace(" ", "_")
+        device_class=ButtonDeviceClass.RESTART,
+        entity_category=EntityCategory.CONFIG,
         self.entity_id = f"button.{device_name}_reboot"
         self._attr_name = "Reboot"
 
     @property
     def device_info(self):
-        """Return device info."""
         device_info = self._coordinator.data.get("device_info", {})
         return {
             "identifiers": {(DOMAIN, "tplink_mr200")},
@@ -42,5 +45,4 @@ class RebootButton(ButtonEntity):
         }
 
     async def async_press(self) -> None:
-        """Handle the button press."""
         await self.hass.async_add_executor_job(self._client.reboot)

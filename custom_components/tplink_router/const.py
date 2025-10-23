@@ -5,4 +5,4 @@ DEFAULT_USERNAME = "admin"
 CONF_HOST = "host"
 CONF_PASSWORD = "password"
 
-UPDATE_INTERVAL = 30  # seconds
+UPDATE_INTERVAL = 30

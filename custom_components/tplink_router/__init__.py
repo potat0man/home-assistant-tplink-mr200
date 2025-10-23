@@ -110,7 +110,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     return True
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Unload a config entry."""
     try:
         client = hass.data[DOMAIN][entry.entry_id]["client"]
         await hass.async_add_executor_job(client.logout)
