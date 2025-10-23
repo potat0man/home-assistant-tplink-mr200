@@ -1,7 +1,7 @@
 {
   "name": "TP-Link MR200",
-  "filename": "tplink_router.zip",
-  "homeassistant": "2023.9.3",
+  "filename": "tplink_mr200.zip",
+  "homeassistant": "2025.10.3",
   "hide_default_branch": true,
   "render_readme": true,
   "zip_release": true
