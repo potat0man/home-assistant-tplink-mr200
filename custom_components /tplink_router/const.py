@@ -1,8 +1,8 @@
-DEFAULT_NAME = "TP-Link Router"
-DOMAIN = "tplink_router"
-DEFAULT_USER = "admin"
-DEFAULT_HOST = "http://192.168.0.1"
+DOMAIN = "archer_mr200"
+DEFAULT_HOST = "192.168.3.1"
+DEFAULT_USERNAME = "admin"
 
-EVENT_NEW_DEVICE = f"{DOMAIN}_new_device"
-EVENT_ONLINE = f"{DOMAIN}_device_online"
-EVENT_OFFLINE = f"{DOMAIN}_device_offline"
+CONF_HOST = "host"
+CONF_PASSWORD = "password"
+
+UPDATE_INTERVAL = 30  # seconds
