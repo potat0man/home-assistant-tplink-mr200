@@ -78,6 +78,11 @@ class MR200Client:
 			l.append(d)
 		return l
 
+	def get_wan_ip_connection(self):
+		self.__check_login_status()
+		r = self.session.post(f'{self.cgi_url}?1', data="[WAN_IP_CONN#2,1,1,0,0,0#0,0,0,0,0,0]0,0\r\n")
+		return self.__make_dict(r.text)
+
 	def get_lte_wan_cfg(self):
 		self.__check_login_status()
 		r = self.session.post(f'{self.cgi_url}?1', data="[LTE_WAN_CFG#2,1,0,0,0,0#0,0,0,0,0,0]0,0\r\n")
