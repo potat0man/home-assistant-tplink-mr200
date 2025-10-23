@@ -38,6 +38,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                     "model": device_info.get("modelName", ""),
                     "hw_version": device_info.get("hardwareVersion", ""),
                     "sw_version": device_info.get("softwareVersion", ""),
+                    "device_url": f"http://{entry.data['host']}",
                 }
                 
                 if lte_link and len(lte_link) > 0:

@@ -38,7 +38,7 @@ class RebootButton(ButtonEntity):
             "model": device_info.get("model"),
             "hw_version": device_info.get("hw_version"),
             "sw_version": device_info.get("sw_version"),
-            "configuration_url": device_info.get("device_url", "https://example.com"),
+            "configuration_url": device_info.get("device_url", "https://example.com")
         }
 
     async def async_press(self) -> None:
