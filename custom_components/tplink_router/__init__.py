@@ -84,8 +84,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                     data["lte_connect_status"] = link_data.get("connectStatus", "0")
                 
                 if lte_intf:
-                    data["lte_rx_speed"] = int(lte_intf.get("curRxSpeed", "0"))
-                    data["lte_tx_speed"] = int(lte_intf.get("curTxSpeed", "0"))
+                    data["lte_current_rx_speed"] = int(lte_intf.get("curRxSpeed", "0"))
+                    data["lte_current_tx_speed"] = int(lte_intf.get("curTxSpeed", "0"))
                     data["lte_total_statistics"] = float(lte_intf.get("totalStatistics", "0"))
                 
                 data["lte_isp_name"] = lte_wan.get("profileName", "Unknown")
