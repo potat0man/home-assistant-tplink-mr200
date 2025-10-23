@@ -6,7 +6,6 @@ Mixed by AI from:
 
 To Do:
   - add SMS service
-  - add MAC display
   - add data fetch switch
   - add WiFi switches
   - add WiFi clients sensors
