@@ -1,8 +1,4 @@
-from homeassistant.components.button import (
-    ButtonDeviceClass,
-    ButtonEntity,
-    ButtonEntityDescription,
-)
+from homeassistant.components.button import ButtonEntity, ButtonDeviceClass, ButtonEntityDescription
 from homeassistant.core import HomeAssistant
 from homeassistant.const import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -27,8 +23,8 @@ class RebootButton(ButtonEntity):
         self._attr_unique_id = f"tplink_mr200_reboot"
         device_info = coordinator.data.get("device_info", {})
         device_name = device_info.get("model", "").lower().replace(" ", "_")
-        device_class = ButtonDeviceClass.RESTART,
-        entity_category = EntityCategory.CONFIG,
+        self._attr_device_class = ButtonDeviceClass.RESTART
+        self._attr_entity_category = EntityCategory.CONFIG
         self.entity_id = f"button.{device_name}_reboot"
         self._attr_name = "Reboot"
 

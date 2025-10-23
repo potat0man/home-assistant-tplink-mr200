@@ -2,11 +2,11 @@
     "domain": "tplink_mr200",
     "name": "TP-Link MR200",
     "documentation": "https://github.com/potat0man/home-assistant-tplink-mr200",
-    "issue_tracker": "https://github.com/potat0man/home-assistant-tplink-router/issues",
+    "issue_tracker": "https://github.com/potat0man/home-assistant-tplink-mr200/issues",
     "config_flow": true,
     "dependencies": [],
     "codeowners": [],
-    "version": "0.36",
+    "version": "0.36.1",
     "requirements": [
             "requests", 
             "rsa"],
