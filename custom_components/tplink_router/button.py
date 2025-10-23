@@ -31,8 +31,9 @@ class RebootButton(ButtonEntity):
     @property
     def device_info(self):
         device_info = self._coordinator.data.get("device_info", {})
+        mac = info.get("mac_address")
         return {
-            "identifiers": {(DOMAIN, device_info.get("mac_address"))},
+            "identifiers": {(DOMAIN, mac)},
             "name": "TP-Link MR200",
             "manufacturer": device_info.get("manufacturer"),
             "model": device_info.get("model"),
