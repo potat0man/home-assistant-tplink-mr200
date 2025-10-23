@@ -37,8 +37,8 @@ async def async_setup_entry(
         Sensor(coordinator, "lte_sim_status_info", "LTE SIM Status Info", None),
         Sensor(coordinator, "lte_sim_status", "LTE SIM Status", None),
         Sensor(coordinator, "lte_connect_status", "LTE Connection Status", None),
-        Sensor(coordinator, "lte_rx_speed", "LTE Current RX Speed", "B/s"),
-        Sensor(coordinator, "lte_tx_speed", "LTE Current TX Speed", "B/s"),
+        Sensor(coordinator, "lte_current_rx_speed", "LTE Current RX Speed", "B/s"),
+        Sensor(coordinator, "lte_current_rx_speed", "LTE Current TX Speed", "B/s"),
         Sensor(coordinator, "lte_total_statistics", "LTE Total Statistics", "B", "total"),
     ]
     
