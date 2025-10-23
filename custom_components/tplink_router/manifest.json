@@ -6,9 +6,10 @@
     "config_flow": true,
     "dependencies": [],
     "codeowners": [],
-    "version": "0.36.994",
+    "version": "2025.10.23.1432",
     "requirements": [
-            "requests", 
-            "rsa"],
+        "requests",
+        "rsa"
+    ],
     "iot_class": "local_polling"
 }
