@@ -4,8 +4,20 @@ Mixed by AI from:
   - https://github.com/psvanstrom/archer-mr400
   - https://github.com/AlexandrErohin/home-assistant-tplink-router
 
+Button:
+  - Reboot
+Services:
+  - Send SMS
+Sensors:
+  - Connection Status/Type
+  - RX/TX Speed
+  - ISP Name/Type
+  - LTE Signal
+  - SIM Status
+  - Total Data
+  - Total Clients
+  - Unread SMS
 To Do:
-  - add SMS service
   - add data fetch switch
   - add WiFi switches
   - add WiFi clients sensors
