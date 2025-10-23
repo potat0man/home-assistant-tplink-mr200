@@ -24,7 +24,7 @@ class DataFetchSwitch(SwitchEntity):
         self._config_entry = config_entry
         self._attr_entity_category = EntityCategory.CONFIG
         self.entity_id = f"switch.{device_name}_data_fetch"
-        self._attr_name = "Data Fetch"
+        self._attr_name = "Router data fetching"
         self._attr_unique_id = f"{device_name}_data_fetch"
         self._attr_icon = "mdi:download"
 
