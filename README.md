@@ -10,3 +10,5 @@ To Do:
   - add data fetch switch
   - add WiFi switches
   - add WiFi clients sensors
+  - add visit button
+  - add logo
