@@ -1,7 +1,7 @@
 {
     "domain": "archer_mr200",
     "name": "TP-Link Archer MR200",
-    "documentation": "https://github.com/your_repo/archer_mr200",
+    "documentation": "https://github.com/potat0man/home-assistant-tplink-mr200",
     "config_flow": true,
     "dependencies": [],
     "codeowners": [],
