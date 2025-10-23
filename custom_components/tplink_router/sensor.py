@@ -57,10 +57,10 @@ class Sensor(CoordinatorEntity, SensorEntity):
 
         if state_class:
             self._attr_state_class = state_class
-        elif key in ["lte_rx_speed", "lte_tx_speed", "lte_signal_level", "total_clients", "unread_sms"]:
+        elif key in ["lte_current_rx_speed", "lte_current_tx_speed", "lte_signal_level", "total_clients", "unread_sms"]:
             self._attr_state_class = SensorStateClass.MEASUREMENT
             
-        if key in ["lte_rx_speed", "lte_tx_speed"]:
+        if key in ["lte_current_rx_speed", "lte_current_tx_speed"]:
             self._attr_device_class = SensorDeviceClass.DATA_RATE
         elif key == "lte_total_statistics":
             self._attr_device_class = SensorDeviceClass.DATA_SIZE
