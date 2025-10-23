@@ -27,8 +27,8 @@ class RebootButton(ButtonEntity):
         self._attr_unique_id = f"tplink_mr200_reboot"
         device_info = coordinator.data.get("device_info", {})
         device_name = device_info.get("model", "").lower().replace(" ", "_")
-        device_class=ButtonDeviceClass.RESTART,
-        entity_category=EntityCategory.CONFIG,
+        self.device_class=ButtonDeviceClass.RESTART,
+        self.entity_category=EntityCategory.CONFIG,
         self.entity_id = f"button.{device_name}_reboot"
         self._attr_name = "Reboot"
 
