@@ -111,6 +111,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     # ADD THIS SECTION HERE - Force update device registry
     device_registry = dr.async_get(hass)
+    wan_ip_conn = await hass.async_add_executor_job(client.get_wan_ip_connection)
     mac = wan_ip_conn.get("MACAddress", "")
     
     if mac:
