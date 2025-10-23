@@ -2,6 +2,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.const import Platform
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
+from homeassistant.helpers import device_registry as dr  # ADD THIS LINE
 import async_timeout
 import logging
 from datetime import timedelta
@@ -131,6 +132,27 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     )
 
     await coordinator.async_config_entry_first_refresh()
+
+
+    # ADD THIS SECTION HERE - Force update device registry
+    device_registry = dr.async_get(hass)
+    device_info = coordinator.data.get("device_info", {})
+    mac = device_info.get("mac_address")
+    
+    if mac:
+        device_registry.async_get_or_create(
+            config_entry_id=entry.entry_id,
+            identifiers={(DOMAIN, mac)},
+            name="TP-Link MR200",
+            manufacturer=device_info.get("manufacturer"),
+            model=device_info.get("model"),
+            hw_version=device_info.get("hw_version"),
+            sw_version=device_info.get("sw_version"),
+            configuration_url=device_info.get("device_url"),
+        )
+    # END OF NEW SECTION
+
+
     hass.data.setdefault(DOMAIN, {})[entry.entry_id] = {
         "client": client,
         "coordinator": coordinator,
