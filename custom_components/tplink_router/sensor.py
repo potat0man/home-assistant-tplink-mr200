@@ -26,25 +26,25 @@ async def async_setup_entry(
     coordinator = hass.data[DOMAIN][config_entry.entry_id]["coordinator"]
 
     entities = [
-        ArcherMR200Sensor(coordinator, "connection_type", "Connection Type", None),
-        ArcherMR200Sensor(coordinator, "total_clients", "Total Clients", None),
-        ArcherMR200Sensor(coordinator, "unread_sms", "Unread SMS", None, "total"),
-        ArcherMR200Sensor(coordinator, "lte_signal_level", "LTE Signal Level", "%"),
-        ArcherMR200Sensor(coordinator, "lte_enabled", "LTE Enabled", None),
-        ArcherMR200Sensor(coordinator, "lte_isp_name", "LTE ISP Name", None),
-        ArcherMR200Sensor(coordinator, "lte_network_type_info", "LTE Network Type Info", None),
-        ArcherMR200Sensor(coordinator, "lte_network_type", "LTE Network Type", None),
-        ArcherMR200Sensor(coordinator, "lte_sim_status_info", "LTE SIM Status Info", None),
-        ArcherMR200Sensor(coordinator, "lte_sim_status", "LTE SIM Status", None),
-        ArcherMR200Sensor(coordinator, "lte_connect_status", "LTE Connection Status", None),
-        ArcherMR200Sensor(coordinator, "lte_rx_speed", "LTE Current RX Speed", "B/s"),
-        ArcherMR200Sensor(coordinator, "lte_tx_speed", "LTE Current TX Speed", "B/s"),
-        ArcherMR200Sensor(coordinator, "lte_total_statistics", "LTE Total Statistics", "B", "total"),
+        Sensor(coordinator, "connection_type", "Connection Type", None),
+        Sensor(coordinator, "total_clients", "Total Clients", None),
+        Sensor(coordinator, "unread_sms", "Unread SMS", None, "total"),
+        Sensor(coordinator, "lte_signal_level", "LTE Signal Level", "%"),
+        Sensor(coordinator, "lte_enabled", "LTE Enabled", None),
+        Sensor(coordinator, "lte_isp_name", "LTE ISP Name", None),
+        Sensor(coordinator, "lte_network_type_info", "LTE Network Type Info", None),
+        Sensor(coordinator, "lte_network_type", "LTE Network Type", None),
+        Sensor(coordinator, "lte_sim_status_info", "LTE SIM Status Info", None),
+        Sensor(coordinator, "lte_sim_status", "LTE SIM Status", None),
+        Sensor(coordinator, "lte_connect_status", "LTE Connection Status", None),
+        Sensor(coordinator, "lte_rx_speed", "LTE Current RX Speed", "B/s"),
+        Sensor(coordinator, "lte_tx_speed", "LTE Current TX Speed", "B/s"),
+        Sensor(coordinator, "lte_total_statistics", "LTE Total Statistics", "B", "total"),
     ]
     
     async_add_entities(entities)
 
-class ArcherMR200Sensor(CoordinatorEntity, SensorEntity):
+class Sensor(CoordinatorEntity, SensorEntity):
     def __init__(self, coordinator, key, name, unit, state_class=None):
         super().__init__(coordinator)
         device_info = coordinator.data.get("device_info", {})
@@ -67,7 +67,7 @@ class ArcherMR200Sensor(CoordinatorEntity, SensorEntity):
 
     @property
     def device_info(self):
-        device_info = self._coordinator.data.get("device_info", {})
+        device_info = self.coordinator.data.get("device_info", {})
         return {
             "identifiers": {(DOMAIN, "tplink_mr200")},
             "name": "TP-Link MR200",
