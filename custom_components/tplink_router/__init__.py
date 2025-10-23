@@ -32,7 +32,31 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                 clients = await hass.async_add_executor_job(client.get_clients)
                 sms = await hass.async_add_executor_job(client.get_sms)
                 device_info = await hass.async_add_executor_job(client.get_device_info)
+                # wan_ip_conn = await hass.async_add_executor_job(client.get_wan_ip_connection)
+
+                # data["device_info"] = {
+                #     "manufacturer": device_info.get("manufacturer", ""),
+                #     "model": device_info.get("modelName", ""),
+                #     "hw_version": device_info.get("hardwareVersion", ""),
+                #     "sw_version": device_info.get("softwareVersion", ""),
+                #     "device_url": f"http://{entry.data['host']}",
+                #     "mac_address": wan_ip_conn.get("MACAddress"),
+                # }
+                
+                # _LOGGER.debug("wan_ip_conn keys: %s", list(wan_ip_conn.keys()) if wan_ip_conn else "None")
+                # _LOGGER.debug("wan_ip_conn data: %s", wan_ip_conn)
+
+
                 wan_ip_conn = await hass.async_add_executor_job(client.get_wan_ip_connection)
+
+                # Add detailed logging
+                _LOGGER.warning("=== WAN IP CONNECTION DEBUG ===")
+                _LOGGER.warning("Type: %s", type(wan_ip_conn))
+                _LOGGER.warning("Content: %s", wan_ip_conn)
+                if isinstance(wan_ip_conn, dict):
+                    _LOGGER.warning("Keys: %s", list(wan_ip_conn.keys()))
+                    for key, value in wan_ip_conn.items():
+                        _LOGGER.warning("  %s = %s", key, value)
 
                 data["device_info"] = {
                     "manufacturer": device_info.get("manufacturer", ""),
@@ -40,11 +64,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                     "hw_version": device_info.get("hardwareVersion", ""),
                     "sw_version": device_info.get("softwareVersion", ""),
                     "device_url": f"http://{entry.data['host']}",
-                    "mac_address": wan_ip_conn.get("MACAddress"),
+                    "mac_address": wan_ip_conn.get("MACAddress") if wan_ip_conn else None,
                 }
-                
-                _LOGGER.debug("wan_ip_conn keys: %s", list(wan_ip_conn.keys()) if wan_ip_conn else "None")
-                _LOGGER.debug("wan_ip_conn data: %s", wan_ip_conn)
+
+                _LOGGER.warning("MAC Address extracted: %s", data["device_info"]["mac_address"])
 
                 if lte_link and len(lte_link) > 0:
                     link_data = lte_link[0]
