@@ -14,11 +14,9 @@ PLATFORMS = [Platform.SENSOR, Platform.BUTTON]
 _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Set up Archer MR200 from a config entry."""
     client = MR200Client(entry.data["host"])
     
     async def async_update_data():
-        """Fetch data from API."""
         try:
             async with async_timeout.timeout(10):
                 username = entry.data.get("username", DEFAULT_USERNAME)
@@ -92,13 +90,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                 await hass.async_add_executor_job(client.logout)
                 return data
         except Exception as err:
-            _LOGGER.error("Error updating Archer MR200 data: %s", err)
+            _LOGGER.error("Error updating data: %s", err)
             raise
 
     coordinator = DataUpdateCoordinator(
         hass,
         logger=_LOGGER,
-        name="Archer MR200",
+        name="TP-Link MR200",
         update_method=async_update_data,
         update_interval=timedelta(seconds=30)  # Add 30 second update interval
     )
