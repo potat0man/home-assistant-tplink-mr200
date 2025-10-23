@@ -22,7 +22,7 @@ class RebootButton(ButtonEntity):
     def __init__(self, coordinator, client):
         self._client = client
         self._coordinator = coordinator
-        self._attr_unique_id = f"archer_mr200_reboot"
+        self._attr_unique_id = f"tplink_mr200_reboot"
         device_info = coordinator.data.get("device_info", {})
         device_name = device_info.get("model", "").lower().replace(" ", "_")
         self.entity_id = f"button.{device_name}_reboot"
@@ -33,8 +33,8 @@ class RebootButton(ButtonEntity):
         """Return device info."""
         device_info = self._coordinator.data.get("device_info", {})
         return {
-            "identifiers": {(DOMAIN, "archer_mr200")},
-            "name": "TP-Link Archer MR200",
+            "identifiers": {(DOMAIN, "tplink_mr200")},
+            "name": "TP-Link MR200",
             "manufacturer": device_info.get("manufacturer"),
             "model": device_info.get("model"),
             "hw_version": device_info.get("hw_version"),
