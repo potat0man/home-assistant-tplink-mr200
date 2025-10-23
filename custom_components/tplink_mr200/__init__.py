@@ -1,8 +1,10 @@
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, ServiceCall
 from homeassistant.const import Platform
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from homeassistant.helpers import device_registry as dr
+import homeassistant.helpers.config_validation as cv
+import voluptuous as vol
 import async_timeout
 import logging
 from datetime import timedelta
@@ -11,6 +13,14 @@ from .const import DOMAIN, DEFAULT_USERNAME
 
 PLATFORMS = [Platform.SENSOR, Platform.BUTTON]
 _LOGGER = logging.getLogger(__name__)
+
+SERVICE_SEND_SMS = "send_sms"
+
+SERVICE_SEND_SMS_SCHEMA = vol.Schema({
+    vol.Required("device"): cv.string,
+    vol.Required("number"): cv.string,
+    vol.Required("text"): cv.string,
+})
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     client = MR200Client(entry.data["host"])
@@ -120,6 +130,56 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         "client": client,
         "coordinator": coordinator,
     }
+
+    async def async_send_sms(call: ServiceCall) -> None:
+        """Handle the send SMS service call."""
+        device_id = call.data.get("device")
+        number = call.data.get("number")
+        text = call.data.get("text")
+
+        # Find the entry that matches the device
+        device_registry = dr.async_get(hass)
+        device_entry = device_registry.async_get(device_id)
+        
+        if not device_entry:
+            _LOGGER.error("Device not found: %s", device_id)
+            return
+
+        # Find the config entry for this device
+        target_entry = None
+        for entry_id in device_entry.config_entries:
+            if entry_id in hass.data.get(DOMAIN, {}):
+                target_entry = entry_id
+                break
+
+        if not target_entry:
+            _LOGGER.error("No config entry found for device: %s", device_id)
+            return
+
+        target_client = hass.data[DOMAIN][target_entry]["client"]
+        
+        try:
+            # Login, send SMS, and logout
+            username = hass.config_entries.async_get_entry(target_entry).data.get("username", DEFAULT_USERNAME)
+            password = hass.config_entries.async_get_entry(target_entry).data["password"]
+            
+            await hass.async_add_executor_job(target_client.login, username, password)
+            await hass.async_add_executor_job(target_client.send_sms, number, text)
+            await hass.async_add_executor_job(target_client.logout)
+            
+            _LOGGER.info("SMS sent successfully to %s", number)
+        except Exception as err:
+            _LOGGER.error("Error sending SMS: %s", err)
+            raise
+
+    # Register the service
+    hass.services.async_register(
+        DOMAIN,
+        SERVICE_SEND_SMS,
+        async_send_sms,
+        schema=SERVICE_SEND_SMS_SCHEMA,
+    )
+
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     return True
 
@@ -133,4 +193,9 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
     if unload_ok:
         hass.data[DOMAIN].pop(entry.entry_id)
+        
+        # Unregister service if no more entries
+        if not hass.data[DOMAIN]:
+            hass.services.async_remove(DOMAIN, SERVICE_SEND_SMS)
+    
     return unload_ok
