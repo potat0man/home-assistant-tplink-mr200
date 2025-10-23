@@ -6,7 +6,7 @@
     "config_flow": true,
     "dependencies": [],
     "codeowners": [],
-    "version": "2025.10.23.1833",
+    "version": "2025.10.23.1836",
     "requirements": [
         "requests",
         "rsa"

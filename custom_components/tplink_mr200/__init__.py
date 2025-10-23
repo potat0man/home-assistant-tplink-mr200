@@ -25,6 +25,10 @@ SERVICE_SEND_SMS_SCHEMA = vol.Schema({
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     client = MR200Client(entry.data["host"])
     
+    # Initialize domain data early
+    hass.data.setdefault(DOMAIN, {})
+    hass.data[DOMAIN].setdefault(f"{entry.entry_id}_fetch_enabled", True)
+    
     async def async_update_data():
         try:
             # Check if data fetch is enabled
@@ -135,7 +139,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         "client": client,
         "coordinator": coordinator,
     }
-    hass.data[DOMAIN][f"{entry.entry_id}_fetch_enabled"] = True
 
     async def async_send_sms(call: ServiceCall) -> None:
         """Handle the send SMS service call."""
