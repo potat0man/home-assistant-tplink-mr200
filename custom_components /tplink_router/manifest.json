@@ -1,0 +1,13 @@
+{
+    "domain": "archer_mr200",
+    "name": "TP-Link Archer MR200",
+    "documentation": "https://github.com/your_repo/archer_mr200",
+    "config_flow": true,
+    "dependencies": [],
+    "codeowners": [],
+    "version": "0.27",
+    "requirements": [
+            "requests", 
+            "rsa"],
+    "iot_class": "local_polling"
+}
