@@ -7,7 +7,8 @@ import async_timeout
 import logging
 from datetime import timedelta
 
-from .mr200 import MR200Client
+# Import exceptions for error handling in the service
+from .mr200 import MR200Client, LoginFailedException, ConnectionFailedException
 from .const import DOMAIN, DEFAULT_USERNAME
 
 PLATFORMS = [Platform.SENSOR, Platform.BUTTON]
@@ -134,6 +135,73 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         "coordinator": coordinator,
     }
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+
+    # --- START: ADDED SERVICE ---
+
+    # Define the service handler
+    async def async_send_sms(service_call):
+        """Handle the send_sms service call."""
+        number = service_call.data.get("number")
+        text = service_call.data.get("text")
+
+        if not number or not text:
+            _LOGGER.error("Send SMS service called without 'number' or 'text'")
+            return
+
+        # Get the device registry
+        device_reg = dr.async_get(hass)
+        
+        # Get the list of device IDs from the service call
+        device_ids = service_call.data.get("device", [])
+        
+        # Find the config_entry_ids for the targeted devices
+        target_entry_ids = set()
+        for dev_id in device_ids:
+            device_entry = device_reg.async_get(dev_id)
+            if device_entry:
+                for config_entry_id in device_entry.config_entries:
+                    # Check if this config entry is for our domain
+                    if config_entry_id in hass.data.get(DOMAIN, {}):
+                        target_entry_ids.add(config_entry_id)
+
+        if not target_entry_ids:
+            _LOGGER.warning("Send SMS service called, but no valid TP-Link router device selected.")
+            return
+
+        # Send SMS from each targeted router
+        for entry_id in target_entry_ids:
+            entry_data = hass.data[DOMAIN][entry_id]
+            client_instance = entry_data["client"]
+            # Get config for username/password
+            config = hass.config_entries.async_get_entry(entry_id).data
+            username = config.get("username", DEFAULT_USERNAME)
+            password = config["password"]
+
+            try:
+                _LOGGER.debug(f"Sending SMS via router {config['host']}")
+                # Perform a full login-send-logout cycle for thread safety
+                await hass.async_add_executor_job(client_instance.login, username, password)
+                await hass.async_add_executor_job(client_instance.send_sms, number, text)
+                await hass.async_add_executor_job(client_instance.logout)
+                _LOGGER.info(f"Successfully sent SMS to {number} via {config['host']}")
+            
+            except (LoginFailedException, ConnectionFailedException) as err:
+                _LOGGER.error(f"Failed to send SMS via {config['host']}: {err}")
+            except Exception as err:
+                _LOGGER.error(f"An unexpected error occurred while sending SMS via {config['host']}: {err}")
+                # Attempt to logout even if send_sms failed
+                try:
+                    await hass.async_add_executor_job(client_instance.logout)
+                except Exception:
+                    pass # Ignore errors during cleanup logout
+
+    # Register the service if it doesn't exist yet
+    if not hass.services.has_service(DOMAIN, "send_sms"):
+        _LOGGER.debug("Registering send_sms service")
+        hass.services.async_register(DOMAIN, "send_sms", async_send_sms)
+        
+    # --- END: ADDED SERVICE ---
+
     return True
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
@@ -146,4 +214,12 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
     if unload_ok:
         hass.data[DOMAIN].pop(entry.entry_id)
+
+        # --- START: ADDED SERVICE UNLOAD ---
+        # If this was the last entry, unregister the service
+        if not hass.data[DOMAIN]:
+            _LOGGER.debug("Unregistering send_sms service")
+            hass.services.async_remove(DOMAIN, "send_sms")
+        # --- END: ADDED SERVICE UNLOAD ---
+
     return unload_ok

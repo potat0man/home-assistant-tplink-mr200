@@ -128,6 +128,10 @@ class MR200Client:
 		r = self.session.post(f'{self.cgi_url}?2&5', data="[LTE_SMS_RECVMSGBOX#0,0,0,0,0,0#0,0,0,0,0,0]0,1\r\nPageNumber=1\r\n[LTE_SMS_RECVMSGENTRY#0,0,0,0,0,0#0,0,0,0,0,0]1,5\r\nindex\r\nfrom\r\ncontent\r\nreceivedTime\r\nunread\r\n")
 		return self.__make_list_dict(r.text)
 
+	def send_sms(self, to, message):
+		self.__check_login_status()
+		self.session.post(f'{self.cgi_url}?2', data=f"[LTE_SMS_SENDNEWMSG#0,0,0,0,0,0#0,0,0,0,0,0]0,3\r\nindex=1\r\nto={to}\r\ntextContent={message}\r\n")
+
 	def reboot(self):
 		self.__check_login_status()
 		self.session.post(f'{self.cgi_url}?7', data="[ACT_REBOOT#0,0,0,0,0,0#0,0,0,0,0,0]0,0\r\n")
