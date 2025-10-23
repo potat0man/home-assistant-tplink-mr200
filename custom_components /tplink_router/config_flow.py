@@ -21,7 +21,7 @@ class ArcherMR200ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 await self.hass.async_add_executor_job(client.logout)
 
                 return self.async_create_entry(
-                    title=f"Archer MR200 ({user_input[CONF_HOST]})",
+                    title=f"TP-Link MR200 ({user_input[CONF_HOST]})",
                     data=user_input
                 )
             except ConnectionFailedException:
