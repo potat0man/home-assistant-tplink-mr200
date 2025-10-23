@@ -2,7 +2,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.const import Platform
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
-from homeassistant.helpers import device_registry as dr  # ADD THIS LINE
+from homeassistant.helpers import device_registry as dr
 import async_timeout
 import logging
 from datetime import timedelta
@@ -108,11 +108,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     await coordinator.async_config_entry_first_refresh()
 
-
-    # ADD THIS SECTION HERE - Force update device registry
+    # Force update device registry using data from coordinator
     device_registry = dr.async_get(hass)
-    wan_ip_conn = await hass.async_add_executor_job(client.get_wan_ip_connection)
-    mac = wan_ip_conn.get("MACAddress", "")
+    device_info = coordinator.data.get("device_info", {})
+    mac = device_info.get("mac_address", "")
     
     if mac:
         device_registry.async_get_or_create(
@@ -125,8 +124,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             sw_version=device_info.get("sw_version"),
             configuration_url=device_info.get("device_url"),
         )
-    # END OF NEW SECTION
-
 
     hass.data.setdefault(DOMAIN, {})[entry.entry_id] = {
         "client": client,
