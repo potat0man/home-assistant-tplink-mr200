@@ -47,13 +47,12 @@ async def async_setup_entry(
 class ArcherMR200Sensor(CoordinatorEntity, SensorEntity):
     def __init__(self, coordinator, key, name, unit, state_class=None):
         super().__init__(coordinator)
+        device_info = coordinator.data.get("device_info", {})
+        device_name = device_info.get("model", "").lower().replace(" ", "_")
         self._key = key
         self._attr_name = name
         self._attr_native_unit_of_measurement = unit
-        self._attr_unique_id = f"tplink_mr200_{key}"
-        
-        device_info = coordinator.data.get("device_info", {})
-        device_name = device_info.get("model", "").lower().replace(" ", "_")
+        self._attr_unique_id = f"{device_name}_{key}"
         self.entity_id = f"sensor.{device_name}_{key}"
 
         if state_class:
@@ -68,8 +67,7 @@ class ArcherMR200Sensor(CoordinatorEntity, SensorEntity):
 
     @property
     def device_info(self):
-        """Return device info."""
-        device_info = self.coordinator.data.get("device_info", {})
+        device_info = self._coordinator.data.get("device_info", {})
         return {
             "identifiers": {(DOMAIN, "tplink_mr200")},
             "name": "TP-Link MR200",
@@ -77,6 +75,7 @@ class ArcherMR200Sensor(CoordinatorEntity, SensorEntity):
             "model": device_info.get("model"),
             "hw_version": device_info.get("hw_version"),
             "sw_version": device_info.get("sw_version"),
+            "configuration_url": device_info.get("device_url", "https://example.com"),
         }
 
     @property

@@ -18,15 +18,15 @@ async def async_setup_entry(
 
 class RebootButton(ButtonEntity):
     def __init__(self, coordinator, client):
-        self._client = client
-        self._coordinator = coordinator
-        self._attr_unique_id = f"tplink_mr200_reboot"
         device_info = coordinator.data.get("device_info", {})
         device_name = device_info.get("model", "").lower().replace(" ", "_")
+        self._client = client
+        self._coordinator = coordinator
         self._attr_device_class = ButtonDeviceClass.RESTART
         self._attr_entity_category = EntityCategory.CONFIG
         self.entity_id = f"button.{device_name}_reboot"
         self._attr_name = "Reboot"
+        self._attr_unique_id = f"{device_name}_reboot"
 
     @property
     def device_info(self):
@@ -38,6 +38,7 @@ class RebootButton(ButtonEntity):
             "model": device_info.get("model"),
             "hw_version": device_info.get("hw_version"),
             "sw_version": device_info.get("sw_version"),
+            "configuration_url": device_info.get("device_url", "https://example.com"),
         }
 
     async def async_press(self) -> None:
