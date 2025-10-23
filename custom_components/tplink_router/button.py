@@ -3,6 +3,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.const import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.helpers import device_registry as dr
 
 from .const import DOMAIN
 
@@ -34,6 +35,7 @@ class RebootButton(ButtonEntity):
         mac = device_info.get("mac_address")
         return {
             "identifiers": {(DOMAIN, mac)},
+            "connections": {(dr.CONNECTION_NETWORK_MAC, mac)},
             "name": "TP-Link MR200",
             "manufacturer": device_info.get("manufacturer"),
             "model": device_info.get("model"),

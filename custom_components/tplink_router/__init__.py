@@ -120,6 +120,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         device_registry.async_get_or_create(
             config_entry_id=entry.entry_id,
             identifiers={(DOMAIN, mac)},
+            connections={(dr.CONNECTION_NETWORK_MAC, mac)},
             name="TP-Link MR200",
             manufacturer=device_info.get("manufacturer", "TP-Link"),
             model=device_info.get("model", "MR200"),

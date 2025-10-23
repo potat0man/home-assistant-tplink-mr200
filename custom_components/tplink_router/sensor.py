@@ -13,6 +13,7 @@ from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
     DataUpdateCoordinator,
 )
+from homeassistant.helpers import device_registry as dr
 
 from .const import DOMAIN, UPDATE_INTERVAL
 
@@ -71,6 +72,7 @@ class Sensor(CoordinatorEntity, SensorEntity):
         mac = device_info.get("mac_address")
         return {
             "identifiers": {(DOMAIN, mac)},
+            "connections": {(dr.CONNECTION_NETWORK_MAC, mac)},
             "name": "TP-Link MR200",
             "manufacturer": device_info.get("manufacturer"),
             "model": device_info.get("model"),
