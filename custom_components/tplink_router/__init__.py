@@ -33,7 +33,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                 sms = await hass.async_add_executor_job(client.get_sms)
                 device_info = await hass.async_add_executor_job(client.get_device_info)
                 wan_ip_conn = await hass.async_add_executor_job(client.get_wan_ip_connection)
-                wan_ip_data = wan_ip_conn[0] if wan_ip_conn and len(wan_ip_conn) > 0 else {}
+                if isinstance(wan_ip_conn, list) and len(wan_ip_conn) > 0:
+                    wan_ip_data = wan_ip_conn[0]
+                elif isinstance(wan_ip_conn, dict):
+                    wan_ip_data = wan_ip_conn
+                else:
+                    wan_ip_data = {}
 
                 data["device_info"] = {
                     "manufacturer": device_info.get("manufacturer", ""),
