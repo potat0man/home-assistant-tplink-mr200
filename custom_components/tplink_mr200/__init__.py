@@ -11,7 +11,7 @@ from datetime import timedelta
 from .mr200 import MR200Client
 from .const import DOMAIN, DEFAULT_USERNAME
 
-PLATFORMS = [Platform.SENSOR, Platform.BUTTON]
+PLATFORMS = [Platform.SENSOR, Platform.BUTTON, Platform.SWITCH]
 _LOGGER = logging.getLogger(__name__)
 
 SERVICE_SEND_SMS = "send_sms"
@@ -27,6 +27,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     
     async def async_update_data():
         try:
+            # Check if data fetch is enabled
+            if not hass.data[DOMAIN].get(f"{entry.entry_id}_fetch_enabled", True):
+                # Return last known data without fetching
+                return coordinator.data if hasattr(coordinator, 'data') and coordinator.data else {}
+            
             async with async_timeout.timeout(10):
                 username = entry.data.get("username", DEFAULT_USERNAME)
                 password = entry.data["password"]
@@ -130,6 +135,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         "client": client,
         "coordinator": coordinator,
     }
+    hass.data[DOMAIN][f"{entry.entry_id}_fetch_enabled"] = True
 
     async def async_send_sms(call: ServiceCall) -> None:
         """Handle the send SMS service call."""
