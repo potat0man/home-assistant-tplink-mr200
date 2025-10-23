@@ -68,9 +68,8 @@ class Sensor(CoordinatorEntity, SensorEntity):
     @property
     def device_info(self):
         device_info = self.coordinator.data.get("device_info", {})
-        device_mac = device_info.get("macAddress")
         return {
-            "identifiers": {(DOMAIN, device_mac)},
+            "identifiers": {(DOMAIN, info.get("mac_address"))},
             "name": "TP-Link MR200",
             "manufacturer": device_info.get("manufacturer"),
             "model": device_info.get("model"),

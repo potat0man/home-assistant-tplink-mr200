@@ -32,13 +32,15 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                 clients = await hass.async_add_executor_job(client.get_clients)
                 sms = await hass.async_add_executor_job(client.get_sms)
                 device_info = await hass.async_add_executor_job(client.get_device_info)
-                
+                wan_ip_conn = await hass.async_add_executor_job(client.get_wan_ip_connection)
+
                 data["device_info"] = {
                     "manufacturer": device_info.get("manufacturer", ""),
                     "model": device_info.get("modelName", ""),
                     "hw_version": device_info.get("hardwareVersion", ""),
                     "sw_version": device_info.get("softwareVersion", ""),
                     "device_url": f"http://{entry.data['host']}",
+                    "mac_address": wan_ip_conn.get("MACAddress"),
                 }
                 
                 if lte_link and len(lte_link) > 0:
