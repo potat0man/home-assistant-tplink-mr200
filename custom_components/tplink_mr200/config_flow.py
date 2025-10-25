@@ -4,7 +4,7 @@ import voluptuous as vol
 from .const import DOMAIN, DEFAULT_HOST, DEFAULT_USERNAME, CONF_HOST, CONF_PASSWORD
 from .mr200 import MR200Client, ConnectionFailedException, LoginFailedException
 
-class ArcherMR200ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
+class MR200ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
 
     async def async_step_user(self, user_input=None):
