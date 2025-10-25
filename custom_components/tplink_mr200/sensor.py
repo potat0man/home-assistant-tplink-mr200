@@ -51,11 +51,12 @@ class Sensor(CoordinatorEntity, SensorEntity):
         device_info = coordinator.data.get("device_info", {})
         device_name0 = device_info.get("manufacturer", "").lower().replace(" ", "_").replace("-", "_")
         device_name1 = device_info.get("model", "").lower().replace(" ", "_")
+        device_name = {device_name0}_{device_name1}
         self._key = key
         self._attr_name = name
         self._attr_native_unit_of_measurement = unit
         self._attr_unique_id = f"{device_name}_{key}"
-        self.entity_id = f"sensor.{device_name0}_{device_name1}_{key}"
+        self.entity_id = f"sensor.{device_name}_{key}"
 
         if state_class:
             self._attr_state_class = state_class
