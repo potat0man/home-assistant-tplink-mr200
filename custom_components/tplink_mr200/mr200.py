@@ -132,29 +132,29 @@ class MR200Client:
 		self.__check_login_status()
 		self.session.post(f'{self.cgi_url}?2', data=f"[LTE_SMS_SENDNEWMSG#0,0,0,0,0,0#0,0,0,0,0,0]0,3\r\nindex=1\r\nto={to}\r\ntextContent={message}\r\n")
 
-	def get_wifi_state(self, band, is_guest=False):
-		self.__check_login_status()
+	# def get_wifi_state(self, band, is_guest=False):
+	# 	self.__check_login_status()
 		
-		if is_guest:
-			r = self.session.post(f'{self.cgi_url}?2', 
-				data=f"[LAN_WLAN_MSSIDENTRY#1,{band},1,0,0,0#0,0,0,0,0,0]0,6\r\n")
-		else:
-			r = self.session.post(f'{self.cgi_url}?2&2&2&2&2', 
-				data=f"[LAN_WLAN#1,{band},0,0,0,0#0,0,0,0,0,0]4,13\r\n")
+	# 	if is_guest:
+	# 		r = self.session.post(f'{self.cgi_url}?2', 
+	# 			data=f"[LAN_WLAN_MSSIDENTRY#1,{band},1,0,0,0#0,0,0,0,0,0]0,6\r\n")
+	# 	else:
+	# 		r = self.session.post(f'{self.cgi_url}?2&2&2&2&2', 
+	# 			data=f"[LAN_WLAN#1,{band},0,0,0,0#0,0,0,0,0,0]4,13\r\n")
 		
-		result = self.__make_dict(r.text)
-		return result.get("enable", "0") == "1"
+	# 	result = self.__make_dict(r.text)
+	# 	return result.get("enable", "0") == "1"
 
-	def set_wifi_state(self, band, enabled, is_guest=False):
-		self.__check_login_status()
-		enable_value = "1" if enabled else "0"
+	# def set_wifi_state(self, band, enabled, is_guest=False):
+	# 	self.__check_login_status()
+	# 	enable_value = "1" if enabled else "0"
 		
-		if is_guest:
-			data = f"[LAN_WLAN_MSSIDENTRY#1,{band},1,0,0,0#0,0,0,0,0,0]0,6\r\nenable={enable_value}\r\n"
-			self.session.post(f'{self.cgi_url}?2', data=data)
-		else:
-			data = f"[LAN_WLAN#1,{band},0,0,0,0#0,0,0,0,0,0]4,13\r\nenable={enable_value}\r\n"
-			self.session.post(f'{self.cgi_url}?2&2&2&2&2', data=data)
+	# 	if is_guest:
+	# 		data = f"[LAN_WLAN_MSSIDENTRY#1,{band},1,0,0,0#0,0,0,0,0,0]0,6\r\nenable={enable_value}\r\n"
+	# 		self.session.post(f'{self.cgi_url}?2', data=data)
+	# 	else:
+	# 		data = f"[LAN_WLAN#1,{band},0,0,0,0#0,0,0,0,0,0]4,13\r\nenable={enable_value}\r\n"
+	# 		self.session.post(f'{self.cgi_url}?2&2&2&2&2', data=data)
 
 	def reboot(self):
 		self.__check_login_status()
