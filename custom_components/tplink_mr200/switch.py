@@ -32,11 +32,12 @@ async def async_setup_entry(
 class DataFetchSwitch(SwitchEntity):
     def __init__(self, coordinator, config_entry):
         device_info = coordinator.data.get("device_info", {})
-        device_name = device_info.get("model", "").lower().replace(" ", "_")
+        device_name0 = device_info.get("manufacturer", "").lower().replace(" ", "_").replace("-", "_")
+        device_name1 = device_info.get("model", "").lower().replace(" ", "_")
         self._coordinator = coordinator
         self._config_entry = config_entry
         self._attr_entity_category = EntityCategory.CONFIG
-        self.entity_id = f"switch.{device_name}_data_fetch"
+        self.entity_id = f"switch.{device_name0}_{device_name1}_data_fetch"
         self._attr_name = "Router data fetching"
         self._attr_unique_id = f"{device_name}_data_fetch"
         self._attr_icon = "mdi:connection"

@@ -18,12 +18,13 @@ async def async_setup_entry(
 class RebootButton(ButtonEntity):
     def __init__(self, coordinator, client):
         device_info = coordinator.data.get("device_info", {})
-        device_name = device_info.get("model", "").lower().replace(" ", "_")
+        device_name0 = device_info.get("manufacturer", "").lower().replace(" ", "_").replace("-", "_")
+        device_name1 = device_info.get("model", "").lower().replace(" ", "_")
         self._client = client
         self._coordinator = coordinator
         self._attr_device_class = ButtonDeviceClass.RESTART
         self._attr_entity_category = EntityCategory.CONFIG
-        self.entity_id = f"button.{device_name}_reboot"
+        self.entity_id = f"button.{device_name0}_{device_name1}_reboot"
         self._attr_name = "Reboot"
         self._attr_unique_id = f"{device_name}_reboot"
         self._attr_icon = "mdi:restart"

@@ -50,8 +50,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
                 data["device_info"] = {
                     "manufacturer": device_info.get("manufacturer", ""),
-                    # "model": device_info.get("modelName", ""),
-                    "model": "MR200",
+                    "model": device_info.get("modelName", ""),
                     "hw_version": device_info.get("hardwareVersion", ""),
                     "sw_version": device_info.get("softwareVersion", ""),
                     "device_url": f"http://{entry.data['host']}",
