@@ -132,6 +132,45 @@ class MR200Client:
 		self.__check_login_status()
 		self.session.post(f'{self.cgi_url}?2', data=f"[LTE_SMS_SENDNEWMSG#0,0,0,0,0,0#0,0,0,0,0,0]0,3\r\nindex=1\r\nto={to}\r\ntextContent={message}\r\n")
 
+	def get_wifi_state(self, band, is_guest=False):
+		"""
+		Get WiFi state for a specific band and type
+		band: 1 for 2.4GHz, 2 for 5GHz
+		is_guest: True for guest network, False for main network
+		"""
+		self.__check_login_status()
+		
+		if is_guest:
+			# Guest network query
+			r = self.session.post(f'{self.cgi_url}?2', 
+				data=f"[LAN_WLAN_MSSIDENTRY#1,{band},1,0,0,0#0,0,0,0,0,0]0,6\r\n")
+		else:
+			# Main WiFi query
+			r = self.session.post(f'{self.cgi_url}?2&2&2&2&2', 
+				data=f"[LAN_WLAN#1,{band},0,0,0,0#0,0,0,0,0,0]4,13\r\n")
+		
+		result = self.__make_dict(r.text)
+		return result.get("enable", "0") == "1"
+
+	def set_wifi_state(self, band, enabled, is_guest=False):
+		"""
+		Set WiFi state for a specific band and type
+		band: 1 for 2.4GHz, 2 for 5GHz
+		enabled: True to enable, False to disable
+		is_guest: True for guest network, False for main network
+		"""
+		self.__check_login_status()
+		enable_value = "1" if enabled else "0"
+		
+		if is_guest:
+			# Guest network control
+			data = f"[LAN_WLAN_MSSIDENTRY#1,{band},1,0,0,0#0,0,0,0,0,0]0,6\r\nenable={enable_value}\r\n"
+			self.session.post(f'{self.cgi_url}?2', data=data)
+		else:
+			# Main WiFi control
+			data = f"[LAN_WLAN#1,{band},0,0,0,0#0,0,0,0,0,0]4,13\r\nenable={enable_value}\r\n"
+			self.session.post(f'{self.cgi_url}?2&2&2&2&2', data=data)
+
 	def reboot(self):
 		self.__check_login_status()
 		self.session.post(f'{self.cgi_url}?7', data="[ACT_REBOOT#0,0,0,0,0,0#0,0,0,0,0,0]0,0\r\n")

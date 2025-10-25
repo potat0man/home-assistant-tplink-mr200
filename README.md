@@ -4,10 +4,12 @@ Mixed by AI from:
   - https://github.com/psvanstrom/archer-mr400
   - https://github.com/AlexandrErohin/home-assistant-tplink-router
 
-Button:
+Buttons:
   - Reboot
 Services:
   - Send SMS
+Swtiches:
+  - Data Fetch
 Sensors:
   - Connection Status/Type
   - RX/TX Speed
@@ -18,7 +20,6 @@ Sensors:
   - Total Clients
   - Unread SMS
 To Do:
-  - add data fetch switch
   - add WiFi switches
   - add WiFi clients sensors
   - add logo
