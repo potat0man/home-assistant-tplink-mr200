@@ -50,7 +50,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
                 data["device_info"] = {
                     "manufacturer": device_info.get("manufacturer", ""),
-                    "model": device_info.get("modelName", ""),
+                    # "model": device_info.get("modelName", ""),
+                    "model": "MR200",
                     "hw_version": device_info.get("hardwareVersion", ""),
                     "sw_version": device_info.get("softwareVersion", ""),
                     "device_url": f"http://{entry.data['host']}",
@@ -125,8 +126,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             connections={(dr.CONNECTION_NETWORK_MAC, mac)},
             name="TP-Link MR200",
             manufacturer=device_info.get("manufacturer", "TP-Link"),
-            # model=device_info.get("model", "MR200"),
-            model="MR200",
+            model=device_info.get("model", "MR200"),
             hw_version=device_info.get("hw_version"),
             sw_version=device_info.get("sw_version"),
             configuration_url=device_info.get("device_url"),
