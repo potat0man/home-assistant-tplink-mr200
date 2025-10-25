@@ -27,20 +27,20 @@ async def async_setup_entry(
     coordinator = hass.data[DOMAIN][config_entry.entry_id]["coordinator"]
 
     entities = [
-        Sensor(coordinator, "connection_type", "Connection Type", None),
-        Sensor(coordinator, "total_clients", "Total Clients", None),
-        Sensor(coordinator, "unread_sms", "Unread SMS", None, "total"),
-        Sensor(coordinator, "lte_signal_level", "LTE Signal Level", "%"),
-        Sensor(coordinator, "lte_enabled", "LTE Enabled", None),
-        Sensor(coordinator, "lte_isp_name", "LTE ISP Name", None),
-        Sensor(coordinator, "lte_network_type_info", "LTE Network Type Info", None),
-        Sensor(coordinator, "lte_network_type", "LTE Network Type", None),
-        Sensor(coordinator, "lte_sim_status_info", "LTE SIM Status Info", None),
-        Sensor(coordinator, "lte_sim_status", "LTE SIM Status", None),
-        Sensor(coordinator, "lte_connect_status", "LTE Connection Status", None),
-        Sensor(coordinator, "lte_current_rx_speed", "LTE Current RX Speed", "B/s"),
-        Sensor(coordinator, "lte_current_tx_speed", "LTE Current TX Speed", "B/s"),
-        Sensor(coordinator, "lte_total_statistics", "LTE Total Statistics", "B", "total"),
+        Sensor(coordinator, "connection_type", "TP-Link MR200 Connection Type", None),
+        Sensor(coordinator, "total_clients", "TP-Link MR200 Total Clients", None),
+        Sensor(coordinator, "unread_sms", "TP-Link MR200 Unread SMS", None, "total"),
+        Sensor(coordinator, "lte_signal_level", "TP-Link MR200 LTE Signal Level", "%"),
+        Sensor(coordinator, "lte_enabled", "TP-Link MR200 LTE Enabled", None),
+        Sensor(coordinator, "lte_isp_name", "TP-Link MR200 LTE ISP Name", None),
+        Sensor(coordinator, "lte_network_type_info", "TP-Link MR200 LTE Network Type Info", None),
+        Sensor(coordinator, "lte_network_type", "TP-Link MR200 LTE Network Type", None),
+        Sensor(coordinator, "lte_sim_status_info", "TP-Link MR200 LTE SIM Status Info", None),
+        Sensor(coordinator, "lte_sim_status", "TP-Link MR200 LTE SIM Status", None),
+        Sensor(coordinator, "lte_connect_status", "TP-Link MR200 LTE Connection Status", None),
+        Sensor(coordinator, "lte_current_rx_speed", "TP-Link MR200 LTE Current RX Speed", "B/s"),
+        Sensor(coordinator, "lte_current_tx_speed", "TP-Link MR200 LTE Current TX Speed", "B/s"),
+        Sensor(coordinator, "lte_total_statistics", "TP-Link MR200 LTE Total Statistics", "B", "total"),
     ]
     
     async_add_entities(entities)
@@ -50,7 +50,7 @@ class Sensor(CoordinatorEntity, SensorEntity):
         super().__init__(coordinator)
         device_info = coordinator.data.get("device_info", {})
         device_name0 = device_info.get("manufacturer", "").lower().replace(" ", "_").replace("-", "_")
-        device_name1 = device_info.get("model", "").lower().replace(" ", "_")
+        device_name1 = device_info.get("model", "").lower().replace("archer","").replace(" ", "_")
         device_name = device_name0 + "_" + device_name1
         self._key = key
         self._attr_name = name
@@ -62,11 +62,14 @@ class Sensor(CoordinatorEntity, SensorEntity):
             self._attr_state_class = state_class
         elif key in ["lte_current_rx_speed", "lte_current_tx_speed", "lte_signal_level", "total_clients", "unread_sms"]:
             self._attr_state_class = SensorStateClass.MEASUREMENT
-            
+
         if key in ["lte_current_rx_speed", "lte_current_tx_speed"]:
             self._attr_device_class = SensorDeviceClass.DATA_RATE
         elif key == "lte_total_statistics":
             self._attr_device_class = SensorDeviceClass.DATA_SIZE
+
+        if "lte" in key:
+            self._attr_icon = "mdi:sim-outline"
 
     @property
     def device_info(self):

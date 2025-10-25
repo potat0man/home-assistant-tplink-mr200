@@ -33,7 +33,7 @@ class DataFetchSwitch(SwitchEntity):
     def __init__(self, coordinator, config_entry):
         device_info = coordinator.data.get("device_info", {})
         device_name0 = device_info.get("manufacturer", "").lower().replace(" ", "_").replace("-", "_")
-        device_name1 = device_info.get("model", "").lower().replace(" ", "_")
+        device_name1 = device_info.get("model", "").lower().replace("archer","").replace(" ", "_")
         device_name = device_name0 + "_" + device_name1
         self._coordinator = coordinator
         self._config_entry = config_entry
