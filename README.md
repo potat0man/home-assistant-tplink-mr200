@@ -27,4 +27,3 @@ To Do:
   - add WiFi switches
   - add WiFi clients sensors
   - add logo
-  - add entity icons

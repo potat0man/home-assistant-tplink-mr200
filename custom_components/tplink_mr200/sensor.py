@@ -70,6 +70,12 @@ class Sensor(CoordinatorEntity, SensorEntity):
 
         if "lte" in key:
             self._attr_icon = "mdi:sim-outline"
+        if "sms" in key:
+            self._attr_icon = "mdi:sim-outline"
+        if "clients" in key:
+            self._attr_icon = "mdi:account-multiple"
+        if "connection_type" in key:
+            self._attr_icon = "mdi:wan"
 
     @property
     def device_info(self):
