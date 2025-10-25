@@ -115,101 +115,24 @@ class WiFiSwitch(CoordinatorEntity, SwitchEntity):
         await super().async_added_to_hass()
         await self._async_update_state()
 
-    # async def _async_update_state(self):
-    #     username = self._config_entry.data.get("username", DEFAULT_USERNAME)
-    #     password = self._config_entry.data["password"]
-        
-    #     await self.hass.async_add_executor_job(self._client.login, username, password)
-    #     is_on = await self.hass.async_add_executor_job(
-    #         self._client.get_wifi_state, 
-    #         self._band, 
-    #         self._is_guest
-    #     )
-    #     await self.hass.async_add_executor_job(self._client.logout)
-        
-    #     self._attr_is_on = is_on
-    #     self.async_write_ha_state()
-
-    # async def async_turn_on(self, **kwargs) -> None:
-    #     username = self._config_entry.data.get("username", DEFAULT_USERNAME)
-    #     password = self._config_entry.data["password"]
-        
-    #     await self.hass.async_add_executor_job(self._client.login, username, password)
-    #     await self.hass.async_add_executor_job(
-    #         self._client.set_wifi_state,
-    #         self._band,
-    #         True,
-    #         self._is_guest
-    #     )
-    #     await self.hass.async_add_executor_job(self._client.logout)
-        
-    #     self._attr_is_on = True
-    #     self.async_write_ha_state()
-
-
-    # async def async_turn_off(self, **kwargs) -> None:
-    #     username = self._config_entry.data.get("username", DEFAULT_USERNAME)
-    #     password = self._config_entry.data["password"]
-        
-    #     await self.hass.async_add_executor_job(self._client.login, username, password)
-    #     await self.hass.async_add_executor_job(
-    #         self._client.set_wifi_state,
-    #         self._band,
-    #         False,
-    #         self._is_guest
-    #     )
-    #     await self.hass.async_add_executor_job(self._client.logout)
-        
-    #     self._attr_is_on = False
-    #     self.async_write_ha_state()
-
-# inside WiFiSwitch class (replace existing implementations)
-
     async def _async_update_state(self):
-        """Fetch current WiFi state from the router and update entity state."""
-        try:
-            username = self._config_entry.data.get("username", DEFAULT_USERNAME)
-            password = self._config_entry.data["password"]
-            # Login once (if needed). MR200Client.login will set TokenID header.
-            await self.hass.async_add_executor_job(self._client.login, username, password)
-            is_on = await self.hass.async_add_executor_job(
-                self._client.get_wifi_state, self._band, self._is_guest
-            )
-            # Do not immediately logout; keep session alive for subsequent calls.
-            # await self.hass.async_add_executor_job(self._client.logout)
-            self._attr_is_on = is_on
-            self.async_write_ha_state()
-        except Exception as exc:
-            _LOGGER.debug("Failed to update WiFi switch state (band=%s guest=%s): %s", self._band, self._is_guest, exc)
-            # keep previous state if update fails
+        is_on = await self.hass.async_add_executor_job(
+            self._client.get_wifi_state, self._band, self._is_guest
+        )
+        self._attr_is_on = is_on
+        self.async_write_ha_state()
 
     async def async_turn_on(self, **kwargs) -> None:
-        """Turn WiFi on."""
-        try:
-            username = self._config_entry.data.get("username", DEFAULT_USERNAME)
-            password = self._config_entry.data["password"]
-            await self.hass.async_add_executor_job(self._client.login, username, password)
-            await self.hass.async_add_executor_job(
-                self._client.set_wifi_state, self._band, True, self._is_guest
-            )
-            # read back actual state rather than assuming success
-            await self._async_update_state()
-        except Exception as exc:
-            _LOGGER.error("Error turning WiFi on (band=%s guest=%s): %s", self._band, self._is_guest, exc)
+        await self.hass.async_add_executor_job(
+            self._client.set_wifi_state, self._band, True, self._is_guest
+        )
+        await self._async_update_state()
 
     async def async_turn_off(self, **kwargs) -> None:
-        """Turn WiFi off."""
-        try:
-            username = self._config_entry.data.get("username", DEFAULT_USERNAME)
-            password = self._config_entry.data["password"]
-            await self.hass.async_add_executor_job(self._client.login, username, password)
-            await self.hass.async_add_executor_job(
-                self._client.set_wifi_state, self._band, False, self._is_guest
-            )
-            await self._async_update_state()
-        except Exception as exc:
-            _LOGGER.error("Error turning WiFi off (band=%s guest=%s): %s", self._band, self._is_guest, exc)
-
+        await self.hass.async_add_executor_job(
+            self._client.set_wifi_state, self._band, False, self._is_guest
+        )
+        await self._async_update_state()
 
     async def async_update(self):
         await self._async_update_state()

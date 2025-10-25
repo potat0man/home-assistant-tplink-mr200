@@ -172,7 +172,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             _LOGGER.error("Error sending SMS: %s", err)
             raise
 
-    # Register the service
     hass.services.async_register(
         DOMAIN,
         SERVICE_SEND_SMS,
@@ -194,7 +193,6 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     if unload_ok:
         hass.data[DOMAIN].pop(entry.entry_id)
         
-        # Unregister service if no more entries
         if not hass.data[DOMAIN]:
             hass.services.async_remove(DOMAIN, SERVICE_SEND_SMS)
     
