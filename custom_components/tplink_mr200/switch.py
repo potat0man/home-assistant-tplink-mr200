@@ -101,7 +101,7 @@ class WiFiSwitch(CoordinatorEntity, SwitchEntity):
     @property
     def device_info(self):
         """Return device info."""
-        device_info = self._coordinator.data.get("device_info", {})
+        device_info = self.coordinator.data.get("device_info", {})
         mac = device_info.get("mac_address")
         return {
             "identifiers": {(DOMAIN, mac)},
@@ -117,7 +117,7 @@ class WiFiSwitch(CoordinatorEntity, SwitchEntity):
     @property
     def available(self) -> bool:
         """Return if entity is available."""
-        return self._coordinator.last_update_success
+        return self.coordinator.last_update_success
 
     async def async_added_to_hass(self):
         """When entity is added to hass."""
