@@ -20,13 +20,13 @@ class RebootButton(ButtonEntity):
         device_info = coordinator.data.get("device_info", {})
         device_name0 = device_info.get("manufacturer", "").lower().replace(" ", "_").replace("-", "_")
         device_name1 = device_info.get("model", "").lower().replace(" ", "_")
-        device_name = {device_name0}_{device_name1}
+        device_name = device_name0 + "_" + device_name1
         self._client = client
         self._coordinator = coordinator
         self._attr_device_class = ButtonDeviceClass.RESTART
         self._attr_entity_category = EntityCategory.CONFIG
-        self.entity_id = f"button.{device_name}_reboot"
         self._attr_name = "Reboot"
+        self.entity_id = f"button.{device_name}_reboot"
         self._attr_unique_id = f"{device_name}_reboot"
         self._attr_icon = "mdi:restart"
 

@@ -34,18 +34,21 @@ class DataFetchSwitch(SwitchEntity):
         device_info = coordinator.data.get("device_info", {})
         device_name0 = device_info.get("manufacturer", "").lower().replace(" ", "_").replace("-", "_")
         device_name1 = device_info.get("model", "").lower().replace(" ", "_")
-        device_name = {device_name0}_{device_name1}
+        device_name = device_name0 + "_" + device_name1
         self._coordinator = coordinator
         self._config_entry = config_entry
         self._attr_entity_category = EntityCategory.CONFIG
-        self.entity_id = f"switch.{device_nam}_data_fetch"
-        self._attr_name = "Router data fetching"
-        self._attr_unique_id = f"{device_name}_data_fetch"
+        self._attr_name = "Data Fetching"
+        self.entity_id = f"switch.{device_name}_data_fetching"
+        self._attr_unique_id = f"{device_name}_data_fetching"
         self._attr_icon = "mdi:connection"
 
     @property
     def device_info(self):
         device_info = self._coordinator.data.get("device_info", {})
+        device_name0 = device_info.get("manufacturer", "").lower().replace(" ", "_").replace("-", "_")
+        device_name1 = device_info.get("model", "").lower().replace(" ", "_")
+        device_name = device_name0 + "_" + device_name1
         mac = device_info.get("mac_address")
         return {
             "identifiers": {(DOMAIN, mac)},
