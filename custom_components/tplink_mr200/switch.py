@@ -58,27 +58,21 @@ class DataFetchSwitch(SwitchEntity):
 
     @property
     def is_on(self) -> bool:
-        """Return true if data fetch is enabled."""
         return self.hass.data[DOMAIN].get(f"{self._config_entry.entry_id}_fetch_enabled", True)
 
     async def async_turn_on(self, **kwargs) -> None:
-        """Turn on data fetch."""
         self.hass.data[DOMAIN][f"{self._config_entry.entry_id}_fetch_enabled"] = True
         self.async_write_ha_state()
-        # Trigger immediate update
         await self._coordinator.async_request_refresh()
 
     async def async_turn_off(self, **kwargs) -> None:
-        """Turn off data fetch."""
         self.hass.data[DOMAIN][f"{self._config_entry.entry_id}_fetch_enabled"] = False
         self.async_write_ha_state()
 
 
 class WiFiSwitch(CoordinatorEntity, SwitchEntity):
-    """Representation of a WiFi switch."""
 
     def __init__(self, coordinator, config_entry, client, band, is_guest):
-        """Initialize the WiFi switch."""
         super().__init__(coordinator)
         self._client = client
         self._config_entry = config_entry
@@ -89,7 +83,6 @@ class WiFiSwitch(CoordinatorEntity, SwitchEntity):
         device_info = coordinator.data.get("device_info", {})
         device_name = device_info.get("model", "").lower().replace(" ", "_")
         
-        # Set up entity attributes
         band_name = "2_4ghz" if band == 1 else "5ghz"
         network_type = "guest" if is_guest else "wifi"
         
@@ -100,7 +93,6 @@ class WiFiSwitch(CoordinatorEntity, SwitchEntity):
 
     @property
     def device_info(self):
-        """Return device info."""
         device_info = self.coordinator.data.get("device_info", {})
         mac = device_info.get("mac_address")
         return {
@@ -116,82 +108,60 @@ class WiFiSwitch(CoordinatorEntity, SwitchEntity):
 
     @property
     def available(self) -> bool:
-        """Return if entity is available."""
         return self.coordinator.last_update_success
 
     async def async_added_to_hass(self):
-        """When entity is added to hass."""
         await super().async_added_to_hass()
-        # Get initial state
         await self._async_update_state()
 
     async def _async_update_state(self):
-        """Update the state from the router."""
-        try:
-            username = self._config_entry.data.get("username", DEFAULT_USERNAME)
-            password = self._config_entry.data["password"]
-            
-            await self.hass.async_add_executor_job(self._client.login, username, password)
-            is_on = await self.hass.async_add_executor_job(
-                self._client.get_wifi_state, 
-                self._band, 
-                self._is_guest
-            )
-            await self.hass.async_add_executor_job(self._client.logout)
-            
-            self._attr_is_on = is_on
-            self.async_write_ha_state()
-        except Exception as err:
-            _LOGGER.error("Error updating WiFi switch state: %s", err)
+        username = self._config_entry.data.get("username", DEFAULT_USERNAME)
+        password = self._config_entry.data["password"]
+        
+        await self.hass.async_add_executor_job(self._client.login, username, password)
+        is_on = await self.hass.async_add_executor_job(
+            self._client.get_wifi_state, 
+            self._band, 
+            self._is_guest
+        )
+        await self.hass.async_add_executor_job(self._client.logout)
+        
+        self._attr_is_on = is_on
+        self.async_write_ha_state()
 
     async def async_turn_on(self, **kwargs) -> None:
-        """Turn the WiFi on."""
-        try:
-            username = self._config_entry.data.get("username", DEFAULT_USERNAME)
-            password = self._config_entry.data["password"]
-            
-            await self.hass.async_add_executor_job(self._client.login, username, password)
-            await self.hass.async_add_executor_job(
-                self._client.set_wifi_state,
-                self._band,
-                True,
-                self._is_guest
-            )
-            await self.hass.async_add_executor_job(self._client.logout)
-            
-            self._attr_is_on = True
-            self.async_write_ha_state()
-            _LOGGER.info("WiFi %s %s turned on", 
-                        "2.4GHz" if self._band == 1 else "5GHz",
-                        "Guest" if self._is_guest else "")
-        except Exception as err:
-            _LOGGER.error("Error turning on WiFi: %s", err)
-            raise
+        username = self._config_entry.data.get("username", DEFAULT_USERNAME)
+        password = self._config_entry.data["password"]
+        
+        await self.hass.async_add_executor_job(self._client.login, username, password)
+        await self.hass.async_add_executor_job(
+            self._client.set_wifi_state,
+            self._band,
+            True,
+            self._is_guest
+        )
+        await self.hass.async_add_executor_job(self._client.logout)
+        
+        self._attr_is_on = True
+        self.async_write_ha_state()
+
 
     async def async_turn_off(self, **kwargs) -> None:
-        """Turn the WiFi off."""
-        try:
-            username = self._config_entry.data.get("username", DEFAULT_USERNAME)
-            password = self._config_entry.data["password"]
-            
-            await self.hass.async_add_executor_job(self._client.login, username, password)
-            await self.hass.async_add_executor_job(
-                self._client.set_wifi_state,
-                self._band,
-                False,
-                self._is_guest
-            )
-            await self.hass.async_add_executor_job(self._client.logout)
-            
-            self._attr_is_on = False
-            self.async_write_ha_state()
-            _LOGGER.info("WiFi %s %s turned off", 
-                        "2.4GHz" if self._band == 1 else "5GHz",
-                        "Guest" if self._is_guest else "")
-        except Exception as err:
-            _LOGGER.error("Error turning off WiFi: %s", err)
-            raise
+        username = self._config_entry.data.get("username", DEFAULT_USERNAME)
+        password = self._config_entry.data["password"]
+        
+        await self.hass.async_add_executor_job(self._client.login, username, password)
+        await self.hass.async_add_executor_job(
+            self._client.set_wifi_state,
+            self._band,
+            False,
+            self._is_guest
+        )
+        await self.hass.async_add_executor_job(self._client.logout)
+        
+        self._attr_is_on = False
+        self.async_write_ha_state()
+
 
     async def async_update(self):
-        """Update the entity state."""
         await self._async_update_state()

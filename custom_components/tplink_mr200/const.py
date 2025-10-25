@@ -1,4 +1,5 @@
 DOMAIN = "tplink_mr200"
+
 DEFAULT_HOST = "192.168.3.1"
 DEFAULT_USERNAME = "admin"
 

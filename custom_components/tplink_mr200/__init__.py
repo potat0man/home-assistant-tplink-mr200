@@ -24,16 +24,12 @@ SERVICE_SEND_SMS_SCHEMA = vol.Schema({
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     client = MR200Client(entry.data["host"])
-    
-    # Initialize domain data early
     hass.data.setdefault(DOMAIN, {})
     hass.data[DOMAIN].setdefault(f"{entry.entry_id}_fetch_enabled", True)
     
     async def async_update_data():
         try:
-            # Check if data fetch is enabled
             if not hass.data[DOMAIN].get(f"{entry.entry_id}_fetch_enabled", True):
-                # Return last known data without fetching
                 return coordinator.data if hasattr(coordinator, 'data') and coordinator.data else {}
             
             async with async_timeout.timeout(10):
@@ -141,12 +137,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     }
 
     async def async_send_sms(call: ServiceCall) -> None:
-        """Handle the send SMS service call."""
         device_id = call.data.get("device")
         number = call.data.get("number")
         text = call.data.get("text")
 
-        # Find the entry that matches the device
         device_registry = dr.async_get(hass)
         device_entry = device_registry.async_get(device_id)
         
@@ -154,7 +148,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             _LOGGER.error("Device not found: %s", device_id)
             return
 
-        # Find the config entry for this device
         target_entry = None
         for entry_id in device_entry.config_entries:
             if entry_id in hass.data.get(DOMAIN, {}):
@@ -168,7 +161,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         target_client = hass.data[DOMAIN][target_entry]["client"]
         
         try:
-            # Login, send SMS, and logout
             username = hass.config_entries.async_get_entry(target_entry).data.get("username", DEFAULT_USERNAME)
             password = hass.config_entries.async_get_entry(target_entry).data["password"]
             
@@ -176,7 +168,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             await hass.async_add_executor_job(target_client.send_sms, number, text)
             await hass.async_add_executor_job(target_client.logout)
             
-            _LOGGER.info("SMS sent successfully to %s", number)
         except Exception as err:
             _LOGGER.error("Error sending SMS: %s", err)
             raise

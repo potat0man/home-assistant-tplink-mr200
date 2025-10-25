@@ -83,5 +83,4 @@ class Sensor(CoordinatorEntity, SensorEntity):
 
     @property
     def native_value(self):
-        """Return the state of the sensor."""
         return self.coordinator.data.get(self._key, 0)

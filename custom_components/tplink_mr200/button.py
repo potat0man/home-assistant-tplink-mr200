@@ -4,7 +4,6 @@ from homeassistant.const import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers import device_registry as dr
-
 from .const import DOMAIN
 
 async def async_setup_entry(
@@ -14,7 +13,6 @@ async def async_setup_entry(
 ) -> None:
     client = hass.data[DOMAIN][config_entry.entry_id]["client"]
     coordinator = hass.data[DOMAIN][config_entry.entry_id]["coordinator"]
-
     async_add_entities([RebootButton(coordinator, client)])
 
 class RebootButton(ButtonEntity):
