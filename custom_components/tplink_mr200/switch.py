@@ -39,7 +39,7 @@ class DataFetchSwitch(SwitchEntity):
         self.entity_id = f"switch.{device_name}_data_fetch"
         self._attr_name = "Router data fetching"
         self._attr_unique_id = f"{device_name}_data_fetch"
-        self._attr_icon = "mdi:download"
+        self._attr_icon = "mdi:connection"
 
     @property
     def device_info(self):
@@ -79,6 +79,7 @@ class WiFiSwitch(CoordinatorEntity, SwitchEntity):
         self._band = band
         self._is_guest = is_guest
         self._attr_is_on = False
+        self._attr_entity_category = EntityCategory.CONFIG
         
         device_info = coordinator.data.get("device_info", {})
         device_name = device_info.get("model", "").lower().replace(" ", "_")
@@ -89,7 +90,7 @@ class WiFiSwitch(CoordinatorEntity, SwitchEntity):
         self._attr_name = f"WiFi {band_name.replace('_', '.')} {'Guest' if is_guest else ''}"
         self._attr_unique_id = f"{device_name}_{network_type}_{band_name}"
         self.entity_id = f"switch.{device_name}_{network_type}_{band_name}"
-        self._attr_icon = "mdi:wifi" if not is_guest else "mdi:account-supervisor"
+        self._attr_icon = "mdi:wifi"
 
     @property
     def device_info(self):

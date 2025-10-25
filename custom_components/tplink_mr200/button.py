@@ -26,6 +26,7 @@ class RebootButton(ButtonEntity):
         self.entity_id = f"button.{device_name}_reboot"
         self._attr_name = "Reboot"
         self._attr_unique_id = f"{device_name}_reboot"
+        self._attr_icon = "mdi:restart"
 
     @property
     def device_info(self):
