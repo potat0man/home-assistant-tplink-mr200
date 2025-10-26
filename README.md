@@ -27,3 +27,5 @@ To Do:
   - add WiFi switches
   - add WiFi clients sensors
   - add logo
+
+<img width="980" height="1553" alt="image" src="https://github.com/user-attachments/assets/b1a50f70-579b-4407-8969-f1ab57125609" />
